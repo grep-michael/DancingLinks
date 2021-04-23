@@ -1,4 +1,4 @@
-import unittest,sys,random
+import unittest,sys,random,math
 
 class Node():
     def __init__(self, right=None, left=None,value=None):
@@ -63,8 +63,8 @@ def randomFill(A):
                 A[r][c] = 1
                 con = False
 
-def testfill():
-    A = [
+def testfillFromPaper():
+    return [
         [0,0,1,0,1,1,0],
         [1,0,0,1,0,0,1],
         [0,1,1,0,0,1,0],
@@ -72,8 +72,16 @@ def testfill():
         [0,1,0,0,0,0,1],
         [0,0,0,1,1,0,1]
     ]
-    return A
 
+def testFillFromLecture():
+    return [
+        [1,0,0,1,0,0,1],
+        [1,0,0,1,0,0,0],
+        [0,0,0,1,1,0,1],
+        [0,0,1,0,1,1,0],
+        [0,1,1,0,0,1,1],
+        [0,1,0,0,0,0,1]
+    ]
 
 def removeColumn(A,j):
     for row in A:
@@ -84,7 +92,7 @@ def removeColumn(A,j):
     #print("-"*30)
 
 
-def XDriver(matrix):
+def SingleSolve(matrix):
 
     Solution=[]
     badCols = []
@@ -117,12 +125,130 @@ def XDriver(matrix):
 
     return Solution
 
+def ColumnWithLeast1s(A):
+    map = {}
+    for col in range(len(A[0])):
+        count =0
+        for row in A:
+            if row[col] == 1:
+                count +=1
+        map[col] = count
+    large = math.inf
+    smallest = None
+    for key in map:
+        if map[key] == 0:
+            return None
+        if map[key] < large:
+            large = map[key]
+            smallest = key
+        
+    #print(f"map: {map}")
+    return smallest
+
+def allSolutions(matrix):
+    
+    Solutions=[]
+    Partial_solution = []
+    def algorX(A):
+
+        pprint(A)
+        print(Partial_solution)
+
+        if len(A) == 0:
+            Solutions.append(Partial_solution)
+            return
+
+        c = ColumnWithLeast1s(A)
+        if c is not None:
+            for row in range(len(A)):
+                if A[row][c] == 1:
+                    r = row
+                    break
+            Partial_solution.append(r)
+            j = 0
+            while j < len(A[0]):
+                if A[r][j]==1:
+                    removeColumn(A,j)
+                    j =0
+                    i = 0
+                    while i < len(A):
+                        if A[i][j]==1:
+                            A.pop(i)
+                            i=0
+                        else:
+                            i+=1
+                else:
+                    j += 1  
+        else:
+            #no further to go we must back track
+            Partial_solution.pop()
+        
+            
+        algorX(A)
+
+    algorX(matrix)
+
+    return Solutions
+
+def reduceMatrixAtRow(A,row):
+    j = 0
+    while j < len(A[0]):
+        if A[row][j]==1:
+            removeColumn(A,j)
+            j =0
+            i = 0
+            while i < len(A):
+                if A[i][j]==1:
+                    A.pop(i)
+                    i=0
+                else:
+                    i+=1
+        else:
+            j += 1 
+    
+
+def test(A):
+
+    Solutions = []
+    Partial_Solution = []
+    
+    def solve(matrix):
+        pprint(matrix)
+        print(Partial_Solution)
+        if len(matrix) == 0:
+            Solutions.append(Partial_Solution)
+            print("good")
+            return 
+        if ColumnWithLeast1s(matrix) is None:
+            Partial_Solution.pop()
+            print("bad")
+            return
+        
+        for col in range(len(matrix[0])):
+            for row in range(len(matrix)):
+                #print(row,col)
+                if matrix[row][col] == 1:
+                    Partial_Solution.append(row)
+
+                    nextMatrix = list(map(list,matrix))
+                    reduceMatrixAtRow(nextMatrix,row)
+                    #TODO return to using array to store bad values
+                    solve(nextMatrix)
+                    pprint(matrix)
+                    
+                    
+            
+    return solve(A)
+
+
+
+
 def main():
     #matrix = [[ 0 for i in range(0,8) ] for j in range(0,1)]
     #randomFill(matrix)
-    matrix = testfill()
+    matrix = testFillFromLecture()
     
-    a = XDriver(matrix)
+    a = test(matrix)
     print(a)
     
 
