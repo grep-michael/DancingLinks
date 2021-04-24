@@ -166,10 +166,11 @@ def RemoveMatrixRowsAndColumns(A):
             print("bad")
             return
         
-        for col in range(len(matrix[0])):
+        for col in goodColumns:
             for row in range(len(matrix)):
+                
                 #print(row,col)
-                if matrix[row][col] == 1:
+                if matrix[row][col] == 1 :
                     
                     Partial_Solution.append(row)
 
@@ -184,8 +185,7 @@ def RemoveMatrixRowsAndColumns(A):
                     #solve is called on the smaller matrix
                     solve(nextMatrix)
                     #once solve returns we are back again working on our larger matrix
-
-                    #pprint(matrix)
+        
         
             
         
@@ -194,13 +194,14 @@ def RemoveMatrixRowsAndColumns(A):
 
     return Solutions
 def removeAllSimilarRows(A,rowToRemove):
+    A.remove(rowToRemove)
     #print(A)
     #print(rowToRemove)
     i = 0
     while i < len(A):
         for index in range(len(A[i])):
-            #print(A[i],index,A[i][index] == rowToRemove[index])
-            if A[i][index] == rowToRemove[index]:
+            #print(i,A[i],index,A[i][index] == 1 and rowToRemove[index] == 1)
+            if A[i][index] == 1 and rowToRemove[index] == 1:
                 try:
                     A.pop(i)
                     i = 0
