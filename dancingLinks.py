@@ -1,6 +1,7 @@
 #!/bin/python3
 
 import unittest,sys,random,math
+from copy import copy,deepcopy
 
 class Node():
     def __init__(self, right=None, left=None,value=None):
@@ -94,7 +95,7 @@ def removeColumn(A,j):
     #print("-"*30)
 
 
-def SingleSolve(matrix):
+def UseArraysToStoreBadRowsAndColumns(matrix):
 
     Solution=[]
     badCols = []
@@ -147,52 +148,82 @@ def ColumnWithLeast1s(A):
     #print(f"map: {map}")
     return smallest
 
-def allSolutions(matrix):
+def RemoveMatrixRowsAndColumns(A):
     
     Solutions=[]
-    Partial_solution = []
-    def algorX(A):
+    Partial_Solution = []
+    goodColumns = [i for i in range(len(A[0]))]
+    def solve(matrix):
+        pprint(matrix)
 
-        pprint(A)
-        print(Partial_solution)
+        if len(matrix) == 0:
+            Solutions.append(Partial_Solution)
+            print("good")
+            return 
 
-        if len(A) == 0:
-            Solutions.append(Partial_solution)
+        if ColumnWithLeast1s(matrix) is None:
+            Partial_Solution.pop()
+            print("bad")
             return
+        
+        for col in range(len(matrix[0])):
+            for row in range(len(matrix)):
+                #print(row,col)
+                if matrix[row][col] == 1:
+                    
+                    Partial_Solution.append(row)
 
-        c = ColumnWithLeast1s(A)
-        if c is not None:
-            for row in range(len(A)):
-                if A[row][c] == 1:
-                    r = row
-                    break
-            Partial_solution.append(r)
-            j = 0
-            while j < len(A[0]):
-                if A[r][j]==1:
-                    removeColumn(A,j)
-                    j =0
-                    i = 0
-                    while i < len(A):
-                        if A[i][j]==1:
-                            A.pop(i)
-                            i=0
-                        else:
-                            i+=1
-                else:
-                    j += 1  
-        else:
-            #no further to go we must back track
-            Partial_solution.pop()
+                    nextMatrix = list(map(list,matrix))
+                    removeAllSimilarRows(nextMatrix,matrix[row])
+                    for i in range(len(matrix[row])):
+                        if matrix[row][i] == 1:
+                            try:
+                                goodColumns.remove(i)
+                            except:
+                                pass
+                    #solve is called on the smaller matrix
+                    solve(nextMatrix)
+                    #once solve returns we are back again working on our larger matrix
+
+                    #pprint(matrix)
         
             
-        algorX(A)
+        
 
-    algorX(matrix)
+    solve(A)
 
     return Solutions
+def removeAllSimilarRows(A,rowToRemove):
+    #print(A)
+    #print(rowToRemove)
+    i = 0
+    while i < len(A):
+        for index in range(len(A[i])):
+            #print(A[i],index,A[i][index] == rowToRemove[index])
+            if A[i][index] == rowToRemove[index]:
+                try:
+                    A.pop(i)
+                    i = 0
+                except:
+                    pass
+        i+=1
+    #print(A)
+
+def removeAllSimilarRowsBack(A,row):
+    print(A)
+    i = 0
+    while i < len(A):
+        for index in range(len(row)):
+            if A[i][index] == row[i]:
+                A.pop(i)
+                i = -1
+                break
+        i+=1
+    print(f"removeAllSimilar {A}")
+        
 
 def reduceMatrixAtRow(A,row):
+    removedRows = []
     j = 0
     while j < len(A[0]):
         if A[row][j]==1:
@@ -207,37 +238,47 @@ def reduceMatrixAtRow(A,row):
                     i+=1
         else:
             j += 1 
-    
+
+
 
 def test(A):
-
+    rangeOfRows = range(len(A))
+    rangeOfCols = range(len(A[0]))
     Solutions = []
     Partial_Solution = []
-    
+    badRows = []
+    badCols = []
+
     def solve(matrix):
         pprint(matrix)
         print(Partial_Solution)
-        if len(matrix) == 0:
+
+        if len(matrix) == len(badRows) and len(A[0]) == len(badCols):
             Solutions.append(Partial_Solution)
             print("good")
             return 
-        if ColumnWithLeast1s(matrix) is None:
-            Partial_Solution.pop()
-            print("bad")
-            return
+
+        #ensure all remaining columns have at least one 1
+        # #if not failed 
+        for j in rangeOfCols:
+            if j not in badCols:
+                rowSum = 0
+                for row in rangeOfRows:
+                    if row not in badRows:
+                        rowSum += A[row][j]
+                if rowSum == 0 and row not in badRows:
+                    print("bad")
+                    return
+
         
         for col in range(len(matrix[0])):
             for row in range(len(matrix)):
                 #print(row,col)
                 if matrix[row][col] == 1:
                     Partial_Solution.append(row)
+                    #'remove' rows
 
-                    nextMatrix = list(map(list,matrix))
-                    reduceMatrixAtRow(nextMatrix,row)
-                    #TODO return to using array to store bad values
-                    solve(nextMatrix)
-                    pprint(matrix)
-                    
+            
                     
             
     return solve(A)
@@ -246,13 +287,19 @@ def test(A):
 
 
 def main():
-    #matrix = [[ 0 for i in range(0,8) ] for j in range(0,1)]
-    #randomFill(matrix)
+
     matrix = testFillFromLecture()
-    
-    a = test(matrix)
+    a = RemoveMatrixRowsAndColumns(matrix)
     print(a)
-    
+
+
+    test = [
+        [1,1,1,1],
+        [1,1,0,1],
+        [0,0,0,0]
+    ]
+    #removeAllSimilarRows(test,test[0])
+    #pprint(test)
 
 
 
