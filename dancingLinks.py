@@ -129,6 +129,9 @@ def UseArraysToStoreBadRowsAndColumns(matrix):
     return Solution
 
 def ColumnWithLeast1s(A):
+    """
+    For use when physically shrinking the matrix
+    """
     map = {}
     for col in range(len(A[0])):
         count =0
@@ -138,6 +141,31 @@ def ColumnWithLeast1s(A):
         map[col] = count
     large = math.inf
     smallest = None
+    for key in map:
+        if map[key] == 0:
+            return None
+        if map[key] < large:
+            large = map[key]
+            smallest = key
+        
+    #print(f"map: {map}")
+    return smallest
+
+def ColumnWithLeast1sArrays(A,columns,rows):
+    """
+    For use when storing columns and rows in arrays
+    """
+    map = {}
+    for col in columns:
+        count =0
+        for row in rows:
+            if A[row][col] == 1:
+                count +=1
+        map[col] = count
+
+    large = math.inf
+    smallest = None
+    
     for key in map:
         if map[key] == 0:
             return None
@@ -243,46 +271,98 @@ def reduceMatrixAtRow(A,row):
 
 
 def test(A):
-    rangeOfRows = range(len(A))
-    rangeOfCols = range(len(A[0]))
+    rangeOfRows = [i for i in range(len(A))]
+    rangeOfCols = [i for i in range(len(A[0]))]
     Solutions = []
     Partial_Solution = []
-    badRows = []
-    badCols = []
 
-    def solve(matrix):
-        pprint(matrix)
-        print(Partial_Solution)
+    
+    def solve(rowToLoop,ColToLoop,level=0,):
 
-        if len(matrix) == len(badRows) and len(A[0]) == len(badCols):
+        if len(rowToLoop) == 0 and len(ColToLoop) == 0:
             Solutions.append(Partial_Solution)
-            print("good")
+            print(level,"good",Partial_Solution)
             return 
 
         #ensure all remaining columns have at least one 1
         # #if not failed 
-        for j in rangeOfCols:
-            if j not in badCols:
-                rowSum = 0
-                for row in rangeOfRows:
-                    if row not in badRows:
-                        rowSum += A[row][j]
-                if rowSum == 0 and row not in badRows:
-                    print("bad")
-                    return
-
-        
-        for col in range(len(matrix[0])):
-            for row in range(len(matrix)):
-                #print(row,col)
-                if matrix[row][col] == 1:
-                    Partial_Solution.append(row)
-                    #'remove' rows
-
-            
+        for j in ColToLoop:
+            colSum = 0
+            for row in rowToLoop:
+                    colSum += A[row][j]
+            if colSum == 0:
+                print(level,"bad")
+                return
+        for col in ColToLoop:
+            for row in rowToLoop:
+                #if level ==1:
+                #    print(row,col,A[row][col])
+                if A[row][col] == 1:
+                    print(level,row,col)
+                    print(level,rowToLoop,ColToLoop)
                     
+                    Partial_Solution.append(row)
+                    newRows = copy(rowToLoop)
+                    newCols = copy(ColToLoop)
+
+                    #'remove' rows and columns
+                    j = 0
+                    while j < len(newCols):
+                        if A[row][newCols[j]] == 1:
+                            i = 0
+                            while i < len(newRows):
+                                if A[newRows[i]][newCols[j]] == 1:
+                                    newRows.pop(i)
+                                    i=0
+                                else:
+                                    i+=1
+                            newCols.pop(j)
+                            j=0
+                        else:
+                            j += 1
+                    
+                    print(level,newRows,newCols)
+                    k = level +1
+                    solve(newRows,newCols,k)
+                    Partial_Solution.pop()
+        """ can not brute force all possible solutions without looping over columns, this will create duplicate answers
+        col = ColumnWithLeast1sArrays(A,ColToLoop,rowToLoop)
+        for row in rowToLoop:
+            #if level ==1:
+            #    print(row,col,A[row][col])
+            if A[row][col] == 1:
+                print(level,row,col)
+                print(level,rowToLoop,ColToLoop)
+                    
+                Partial_Solution.append(row)
+                newRows = copy(rowToLoop)
+                newCols = copy(ColToLoop)
+                #'remove' rows
+
+                j = 0
+                while j < len(newCols):
+                    if A[row][newCols[j]] == 1:
+                        i = 0
+                        while i < len(newRows):
+                            if A[newRows[i]][newCols[j]] == 1:
+                                newRows.pop(i)
+                                i=0
+                            else:
+                                i+=1
+                        newCols.pop(j)
+                        j=0
+                    else:
+                        j += 1
+                print(level,newRows,newCols)
+                k = level +1
+                solve(newRows,newCols,k)
+                Partial_Solution.pop()"""
+        
+
+                                   
             
-    return solve(A)
+    solve(rangeOfRows,rangeOfCols)
+    return Solutions
 
 
 
@@ -290,15 +370,9 @@ def test(A):
 def main():
 
     matrix = testFillFromLecture()
-    a = RemoveMatrixRowsAndColumns(matrix)
+    a = test(matrix)
     print(a)
 
-
-    test = [
-        [1,1,1,1],
-        [1,1,0,1],
-        [0,0,0,0]
-    ]
     #removeAllSimilarRows(test,test[0])
     #pprint(test)
 
