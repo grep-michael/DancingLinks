@@ -34,25 +34,6 @@ def makeList():
     array.extend((a,b,c,d))
     return array
 
-def pprint(matrix):
-    #print column count
-    sys.stdout.write(f"  ")
-    for i in range(0,len(matrix[0])):
-        sys.stdout.write(f" {i} ")
-    sys.stdout.write("\n")
-    for i in range(0,len(matrix[0])+1):
-        sys.stdout.write(f" - ")
-    sys.stdout.write("\n")
-
-    #print rows
-    rows = list(range(0,len(matrix)))
-    rowcount = 0
-    for row in matrix:
-        sys.stdout.write(f"{rows[rowcount]}|")
-        for col in row:
-            sys.stdout.write(f" {col} ")
-        sys.stdout.write("\n")
-        rowcount += 1
 
 def randomFill(A):
     rows = len(A)
@@ -66,25 +47,7 @@ def randomFill(A):
                 A[r][c] = 1
                 con = False
 
-def testfillFromPaper():
-    return [
-        [0,0,1,0,1,1,0],
-        [1,0,0,1,0,0,1],
-        [0,1,1,0,0,1,0],
-        [1,0,0,1,0,0,0],
-        [0,1,0,0,0,0,1],
-        [0,0,0,1,1,0,1]
-    ]
 
-def testFillFromLecture():
-    return [
-        [1,0,0,1,0,0,1],
-        [1,0,0,1,0,0,0],
-        [0,0,0,1,1,0,1],
-        [0,0,1,0,1,1,0],
-        [0,1,1,0,0,1,1],
-        [0,1,0,0,0,0,1]
-    ]
 
 def removeColumn(A,j):
     for row in A:
@@ -280,7 +243,7 @@ def test(A):
     def solve(rowToLoop,ColToLoop,level=0,):
 
         if len(rowToLoop) == 0 and len(ColToLoop) == 0:
-            Solutions.append(Partial_Solution)
+            Solutions.append(copy(Partial_Solution))
             print(level,"good",Partial_Solution)
             return 
 
@@ -295,8 +258,7 @@ def test(A):
                 return
         for col in ColToLoop:
             for row in rowToLoop:
-                #if level ==1:
-                #    print(row,col,A[row][col])
+
                 if A[row][col] == 1:
                     print(level,row,col)
                     print(level,rowToLoop,ColToLoop)
@@ -371,8 +333,10 @@ def main():
 
     matrix = testFillFromLecture()
     a = test(matrix)
-    print(a)
-
+    b = []
+    filter = lambda x,y: [y.append(i) for i in x if i not in y]
+    filter(a,b)
+    print(b)
     #removeAllSimilarRows(test,test[0])
     #pprint(test)
 
