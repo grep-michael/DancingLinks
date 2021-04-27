@@ -58,7 +58,7 @@ def AlgorithumX(A):
 class AlgorithumXTest(unittest.TestCase):
     Matrix = HelperFunctions.testFillFromLecture()
 
-    def test_alforx( self ):
+    def test_algorx1( self ):
         self.assertTrue( [1,3,5] in AlgorithumX(self.Matrix))
 
 
