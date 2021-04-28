@@ -7,10 +7,11 @@ class NodeObject():
         self.C=C
 
 class ColumnObject( NodeObject ):
-    def __init__(self,N="defaultName",S=-1,**kwargs):
-        super().__init__(kwargs)
+    def __init__(self,N="defaultName",S=-1):
+        super().__init__()
         self.N=N
         self.S=S
+
 
 def pprint(matrix):
     #print column count
@@ -50,11 +51,41 @@ def testFillFromLecture():
         [0,1,0,0,0,0,1]
     ]
 
-def ConvertMatrixToList():
-    pass
+
+def createColumnHeaders(Matrix):
+    def makeColumnObject(n):
+        if n == 0:
+            return ColumnObject(N=n,S=0)
+        a = ColumnObject(N=n,S=0) 
+        a.L = makeColumnObject( n-1 )
+        return a
+
+    columnCount = len(Matrix[0])
+    root = ColumnObject(N="root")
+    a = makeColumnObject(columnCount)
+    #returns the last column object linked only to the left
+    #now we link to the right
+    nxt = a
+    while nxt.L:
+        nxt.L.R = nxt
+        nxt = nxt.L
+    #append root
+    root.L = a
+    root.R = nxt 
+    return root
+
+
+
+
+def ConvertMatrixToList(Matrix):
+    rootHeader = createColumnHeaders(Matrix)
+    nxt = rootHeader
+    
+    
 
 
 if __name__ == "__main__":
     #Used for testing
-    x = NodeObject(U=1,D=2,L=3,R=4,C=5)
-    c = ColumnObject(D=2,L=3,R=4,C=5,N=6,S=7)
+    A = testFillFromLecture()
+    node = NodeObject(L=22)
+    col = ColumnObject(N="bob")
