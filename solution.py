@@ -53,14 +53,26 @@ def AlgorithumX(A):
                     Partial_Solution.pop()
     
     solve(rangeOfRows,rangeOfCols)
-    return Solutions
+    filtered = []
+    filter = lambda x,y: [y.append(i) for i in x if i not in y]
+    filter(Solutions,filtered)
+    #print(filtered)
+    return filtered
 
 class AlgorithumXTest(unittest.TestCase):
     Matrix = HelperFunctions.testFillFromLecture()
 
-    def test_algorx1( self ):
+    def test_algorx_solution_in_solutions( self ):
         self.assertTrue( [1,3,5] in AlgorithumX(self.Matrix))
+    def test_algorx_length_of_solutions( self ):
+        self.assertTrue(len(AlgorithumX(self.Matrix)) == 6)
 
+class MaxtrixToLinkedListsTest(unittest.TestCase):
+    Matrix = HelperFunctions.testFillFromLecture()
+
+    def test_linklists_converter_test( self ):
+        #if we use the matrix from lecture there should be 24, I counted manually, if algorithum is made and test doesnt pass count again @michael
+        self.asserTrue(len(MaxtirxToList(Matrix)) == 24)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 #!/bin/python3
+from HelperFunctions import *
 
 import unittest,sys,random,math
 from copy import copy,deepcopy
@@ -268,21 +269,21 @@ def test(A):
                     newCols = copy(ColToLoop)
 
                     #'remove' rows and columns
-                    j = 0
-                    while j < len(newCols):
-                        if A[row][newCols[j]] == 1:
-                            i = 0
-                            while i < len(newRows):
-                                if A[newRows[i]][newCols[j]] == 1:
-                                    newRows.pop(i)
-                                    i=0
-                                else:
-                                    i+=1
-                            newCols.pop(j)
-                            j=0
-                        else:
-                            j += 1
                     
+                    for j in ColToLoop:
+                        if A[row][j] == 1:
+                            for i in rowToLoop:
+                                if A[i][j] == 1:
+                                    print(i)
+                                    print(newRows)
+                                    try:
+                                        newRows.remove(i)
+                                    except:
+                                        pass
+
+
+                            newCols.remove(j)
+
                     print(level,newRows,newCols)
                     k = level +1
                     solve(newRows,newCols,k)
