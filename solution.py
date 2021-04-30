@@ -2,6 +2,15 @@ import unittest,HelperFunctions
 from copy import copy,deepcopy
 
 def AlgorithumX(A):
+
+    """brute forces all solutions to the exact cover problem 
+
+    :param Matrix: 2d python array of 1's and 0's
+    
+    :return: array of all solutions
+    :rtype: Array
+    """
+
     rangeOfRows = [i for i in range(len(A))]
     rangeOfCols = [i for i in range(len(A[0]))]
     Solutions = []
@@ -77,9 +86,14 @@ class MaxtrixToLinkedListsTest(unittest.TestCase):
     def test_linklist_converter_createColumnHeaders_testcircularlist(self):
         root = HelperFunctions.createColumnHeaders(self.Matrix)
         self.assertEqual(root.N, "root")
-        self.assertEqual(root.L.N, 7) #last column
+        self.assertEqual(root.L.N, 6) #last column
         self.assertEqual(root.R.N, 0) # first column
+    def test_linklist_converter_creatRows_testAllRowsExist(self):
+        #HelperFunctions.pprint(self.Matrix)
+        root = HelperFunctions.createColumnHeaders(self.Matrix)
+        HelperFunctions.createRows(root,self.Matrix)
 
+        pass
     def test_linklist_converter_1(self):
         pass
 

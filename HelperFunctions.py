@@ -1,16 +1,22 @@
+import sys
 class NodeObject():
-    def __init__(self,L=None,R=None,U=None,D=None,C=None):
+    def __init__(self,L=None,R=None,U=None,D=None,C=None,I="default"):
         self.L=L
         self.R=R
         self.D=D
         self.U=U
         self.C=C
+        self.I=I
+    def __str__(self):
+        return str(self.I)
 
-class ColumnObject( NodeObject ):
+class ColumnNode( NodeObject ):
     def __init__(self,N="defaultName",S=-1):
         super().__init__()
         self.N=N
         self.S=S
+    def __str__(self):
+        return str(self.N)
 
 
 def pprint(matrix):
@@ -53,18 +59,25 @@ def testFillFromLecture():
 
 
 def createColumnHeaders(Matrix):
-    def makeColumnObject(n):
+    """ from 2d array create column headers for the link list structure
+
+    :param Matrix: 2d python array of 1's and 0's
+    
+    :return: the root element of the linked list structure
+    :rtype: ColumnNode
+    """
+
+    def makeColumnNodes(n):
         if n == 0:
-            return ColumnObject(N=n,S=0)
-        a = ColumnObject(N=n,S=0) 
-        a.L = makeColumnObject( n-1 )
+            return ColumnNode(N=n,S=0)
+        a = ColumnNode(N=n,S=0) 
+        a.L = makeColumnNodes( n-1 )
         return a
 
-    columnCount = len(Matrix[0])
-    root = ColumnObject(N="root")
-    a = makeColumnObject(columnCount)
-    #returns the last column object linked only to the left
-    #now we link to the right
+    columnCount = len(Matrix[0])-1
+    root = ColumnNode(N="root")
+    a = makeColumnNodes(columnCount)
+    
     nxt = a
     while nxt.L:
         nxt.L.R = nxt
@@ -74,12 +87,69 @@ def createColumnHeaders(Matrix):
     root.R = nxt 
     return root
 
+def connectRowsFromRowList(rowArray):
+    """connects rows based on rowArray
 
+    :param rowArray: Array of zeros and NodeObjects 
+    
+    :return: None
+    """
+    First = None
+    prev = None
+    for i in rowArray:
+        if i != 0:
+            #sets Right value of current element
+            i.R = prev
+            prev = i
+            #set left Node
+            if i.R != None:
+                i.R.L = i
+            if First == None:
+                First =i
+    First.R = prev
+    prev.L = First
+
+
+def createRows(rootNode,Matrix):
+    """Loops over matrix adding nodes for each one"
+
+    :param rootNode: ColumnNode 
+    :param Matrix: 2d python array of 1's and 0's
+    
+    :return: None
+    """
+
+    for row in Matrix:
+        #generate the nessacary Node objects
+        #storing them in an array lets us generate them and keep track of their column number
+        rowArray = [0 for i in row]
+        for i in range(len(row)):
+            if row[i] == 1:
+                rowArray[i] = NodeObject(I=i)
+        #link them up horizontally
+
+        connectRowsFromRowList(rowArray)
+        #link them to column headers
+        
+        #Testing
+        for i in rowArray:
+            if i != 0:
+                print(i.R,i,i.L)
+        break
+        
+        
 
 
 def ConvertMatrixToList(Matrix):
+    """Converts a 2d python array into a structure of linked lists based on Donal E. Knuths paper "Dancing Links"
+
+    :param Matrix: 2d python array of 1's and 0's
+    
+    :return: the root element of the linked list structure
+    :rtype: ColumnNode
+    """
     rootHeader = createColumnHeaders(Matrix)
-    nxt = rootHeader
+    
     
     
 
@@ -88,4 +158,4 @@ if __name__ == "__main__":
     #Used for testing
     A = testFillFromLecture()
     node = NodeObject(L=22)
-    col = ColumnObject(N="bob")
+    col = ColumnNode(N="bob")
