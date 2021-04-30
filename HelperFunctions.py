@@ -94,7 +94,9 @@ def createColumnHeaders(Matrix):
         nxt = nxt.L
     #append root
     root.L = a
+    a.R = root
     root.R = nxt 
+    nxt.L = root
     return root
 
 def connectRowsFromRowArray(rowArray):
@@ -129,13 +131,14 @@ def createRows(rootNode,Matrix):
     :return: None
     """
 
-    for row in Matrix:
+    for row in range(len(Matrix)):
         #generate the nessacary Node objects
         #storing them in an array lets us generate them and keep track of their column number
-        rowArray = [0 for i in row]
-        for i in range(len(row)):
-            if row[i] == 1:
-                rowArray[i] = NodeObject(I=i)
+        rowArray = [0 for i in Matrix[row]]
+        for i in range(len(Matrix[row])):
+            if Matrix[row][i] == 1:
+                name = int(str(row) + str(i))
+                rowArray[i] = NodeObject(I=name)
         #link them up horizontally
         connectRowsFromRowArray(rowArray)
         #link them to column headers
@@ -166,7 +169,13 @@ def createRows(rootNode,Matrix):
                 else:
                     bottom.D = rowArray[i]
                 columnHeader.S += 1
-        
+
+def printObject(obj):
+    for key in obj.__dict__:
+        value = key + ":" + obj.__dict__[key].__str__()
+        sys.stdout.write(value + " ")
+    print()
+
 def printLinkedLists(rootNode):
     """
     param rootNode: ColumnNode object
@@ -174,6 +183,11 @@ def printLinkedLists(rootNode):
     :return: Node count
     :rtype: int
     """
+    nxt = rootNode.R
+    while nxt != rootNode:
+        printObject(nxt)
+        nxt = nxt.R
+    
     
 
 
