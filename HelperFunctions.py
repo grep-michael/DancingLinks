@@ -87,7 +87,7 @@ def createColumnHeaders(Matrix):
     root.R = nxt 
     return root
 
-def connectRowsFromRowList(rowArray):
+def connectRowsFromRowArray(rowArray):
     """connects rows based on rowArray
 
     :param rowArray: Array of zeros and NodeObjects 
@@ -127,10 +127,11 @@ def createRows(rootNode,Matrix):
             if row[i] == 1:
                 rowArray[i] = NodeObject(I=i)
         #link them up horizontally
-
         connectRowsFromRowList(rowArray)
         #link them to column headers
         
+        
+
         #Testing
         for i in rowArray:
             if i != 0:
@@ -149,7 +150,7 @@ def ConvertMatrixToList(Matrix):
     :rtype: ColumnNode
     """
     rootHeader = createColumnHeaders(Matrix)
-    
+    createRows(rootHeader,Matrix)
     
     
 
@@ -157,5 +158,4 @@ def ConvertMatrixToList(Matrix):
 if __name__ == "__main__":
     #Used for testing
     A = testFillFromLecture()
-    node = NodeObject(L=22)
-    col = ColumnNode(N="bob")
+    ConvertMatrixToList(A)
