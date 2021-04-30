@@ -39,6 +39,10 @@ def pprint(matrix):
         sys.stdout.write("\n")
         rowcount += 1
 def testfillFromPaper():
+    """returns the matrix used as an example in the paper
+    :return: matrix
+    :rtype: 2d array
+    """
     return [
         [0,0,1,0,1,1,0],
         [1,0,0,1,0,0,1],
@@ -48,6 +52,12 @@ def testfillFromPaper():
         [0,0,0,1,1,0,1]
     ]
 def testFillFromLecture():
+    """
+    returns matrix used in lecture 
+    :return: maxtix
+    :rtype: 2d array
+    """
+
     return [
         [1,0,0,1,0,0,1],
         [1,0,0,1,0,0,0],
@@ -127,18 +137,44 @@ def createRows(rootNode,Matrix):
             if row[i] == 1:
                 rowArray[i] = NodeObject(I=i)
         #link them up horizontally
-        connectRowsFromRowList(rowArray)
+        connectRowsFromRowArray(rowArray)
         #link them to column headers
-        
-        
+        for i in range(len(rowArray)):
+            if rowArray[i] != 0:
+                #find column of this node, i.e i
+                columnHeader = rootNode
+                while columnHeader:
+                    if columnHeader.N == i:
+                        break
+                    columnHeader = columnHeader.L
+                #print(columnHeader,rowArray[i])
+                #print(rowArray)
+                rowArray[i].C = columnHeader
 
-        #Testing
-        for i in rowArray:
-            if i != 0:
-                print(i.R,i,i.L)
-        break
+                #bottom element in a column
+                bottom = columnHeader.U
+                #set 'up' fields
+                columnHeader.U = rowArray[i]
+                if bottom == None:
+                    rowArray[i].U = columnHeader
+                else:
+                    rowArray[i].U = bottom
+                #set 'down' fields
+                if bottom == None:
+                    columnHeader.D = rowArray[i]
+                
+                else:
+                    bottom.D = rowArray[i]
+                columnHeader.S += 1
         
-        
+def printLinkedLists(rootNode):
+    """
+    param rootNode: ColumnNode object
+    
+    :return: Node count
+    :rtype: int
+    """
+    
 
 
 def ConvertMatrixToList(Matrix):
@@ -151,7 +187,8 @@ def ConvertMatrixToList(Matrix):
     """
     rootHeader = createColumnHeaders(Matrix)
     createRows(rootHeader,Matrix)
-    
+
+    printLinkedLists(rootHeader) 
     
 
 

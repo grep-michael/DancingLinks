@@ -92,8 +92,14 @@ class MaxtrixToLinkedListsTest(unittest.TestCase):
         #HelperFunctions.pprint(self.Matrix)
         root = HelperFunctions.createColumnHeaders(self.Matrix)
         HelperFunctions.createRows(root,self.Matrix)
-
-        pass
+        #the size of each row from he lecture Matrix
+        sizes = [2,2,2,3,2,2,4]
+        r = root.R
+        for i in sizes:
+            self.assertEqual(r.S,i)
+            r = r.R
+        
+        
     def test_linklist_converter_1(self):
         pass
 
