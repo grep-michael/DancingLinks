@@ -142,22 +142,28 @@ class DancingLinksTest(unittest.TestCase):
     """
     LectureMatrix = HelperFunctions.testFillFromLecture()
     PaperMatrix = HelperFunctions.testfillFromPaper()
-
-    def test_search_solution_LectureMatrix(self):  
+    def getSolution(Os):
+        """
+        gets the solution from a dict of NodeObjects
+        This works because the 'I' field of the NodeObjects is set to a two digit string of row and column
+        
+        :param Os: solution dict produced from dancingLinks
+        :type Os: dict 
+        """
+        solution = ""
+        for key in Os:
+            solution += Os[key].I[0]
+        return solution
+    
+    def test_dancingLinks_LectureMatrix(self):  
         root = HelperFunctions.ConvertMatrixToList(self.LectureMatrix)  
         Os = dancingLinks(root)
-        solution = ""
-        for key in Os:
-            solution += Os[key].I[0]
-        self.assertTrue( solution == "153")
+        self.assertTrue( getSolution(Os) == "153")
 
-    def test_search_solution_PaperMatrix(self):
+    def test_dancingLinks_PaperMatrix(self):
         root = HelperFunctions.ConvertMatrixToList(self.PaperMatrix)  
         Os = dancingLinks(root)
-        solution = ""
-        for key in Os:
-            solution += Os[key].I[0]
-        self.assertTrue( solution == "340")
+        self.assertTrue( getSolution(Os) == "340")
 
 class MaxtrixToLinkedListsTest(unittest.TestCase):
     """
@@ -166,7 +172,7 @@ class MaxtrixToLinkedListsTest(unittest.TestCase):
     """
     LectureMatrix = HelperFunctions.testFillFromLecture()
     PaperMatrix = HelperFunctions.testfillFromPaper()
-    
+
     def test_linklist_converter_createColumnHeaders_testcircularlist_LectureMaxtrix(self):
         root = HelperFunctions.createColumnHeaders(self.LectureMatrix)
         self.assertEqual(root.N, "root")
