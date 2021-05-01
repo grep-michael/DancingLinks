@@ -1,28 +1,4 @@
 import sys
-class NodeObject():
-    """
-    Represents a data Object as highlighted in Donald Knuths paper "dancing links"
-    The I field indicates an identifier for the NodeObject, In our case we use a 2 digit number corresponding to the row and column
-    """
-    def __init__(self,L=None,R=None,U=None,D=None,C=None,I="default"):
-        self.L=L
-        self.R=R
-        self.D=D
-        self.U=U
-        self.C=C
-        self.I=I
-
-    def printSelf(self):
-        print(str(f"L:{self.L},R:{self.R},U:{self.R},D:{self.D},C:{self.C},I:{self.I}"))
-
-class ColumnNode( NodeObject ):
-    """
-    Represents a Columnheader as highlighted in Donald Knuths paper "dancing links"
-    """
-    def __init__(self,N="defaultName",S=-1):
-        super().__init__(U=self,D=self)
-        self.N=N
-        self.S=S
 
 def pprint(matrix):
     """
@@ -48,6 +24,55 @@ def pprint(matrix):
             sys.stdout.write(f" {col} ")
         sys.stdout.write("\n")
         rowcount += 1
+
+def printObject(obj):
+    """
+    prints all of an objects fields
+
+    :param obj: the object to print
+    :type obj: any
+    """
+    for key in obj.__dict__:
+        value = key + ":" + obj.__dict__[key].__str__()
+        sys.stdout.write(value + " ")
+    print()
+
+def printLinkedLists(rootNode):
+    """
+    param rootNode: ColumnNode object
+    
+    :return: Node count
+    :rtype: int
+    """
+    nxt = rootNode.R
+    while nxt != rootNode:
+        printObject(nxt)
+        nxt = nxt.R   
+
+class NodeObject():
+    """
+    Represents a data Object as highlighted in Donald Knuths paper "dancing links"
+    The I field indicates an identifier for the NodeObject, In our case we use a 2 digit number corresponding to the row and column
+    """
+    def __init__(self,L=None,R=None,U=None,D=None,C=None,I="default"):
+        self.L=L
+        self.R=R
+        self.D=D
+        self.U=U
+        self.C=C
+        self.I=I
+
+    def printSelf(self):
+        print(str(f"L:{self.L},R:{self.R},U:{self.R},D:{self.D},C:{self.C},I:{self.I}"))
+
+class ColumnNode( NodeObject ):
+    """
+    Represents a Columnheader as highlighted in Donald Knuths paper "dancing links"
+    """
+    def __init__(self,N="defaultName",S=-1):
+        super().__init__(U=self,D=self)
+        self.N=N
+        self.S=S
 
 def testfillFromPaper():
     """returns the matrix used as an example in the paper
@@ -186,30 +211,6 @@ def createRows(rootNode,Matrix):
 
                 rowArray[i].C = columnHeader
                 columnHeader.S += 1
-
-def printObject(obj):
-    """
-    prints all of an objects fields
-
-    :param obj: the object to print
-    :type obj: any
-    """
-    for key in obj.__dict__:
-        value = key + ":" + obj.__dict__[key].__str__()
-        sys.stdout.write(value + " ")
-    print()
-
-def printLinkedLists(rootNode):
-    """
-    param rootNode: ColumnNode object
-    
-    :return: Node count
-    :rtype: int
-    """
-    nxt = rootNode.R
-    while nxt != rootNode:
-        printObject(nxt)
-        nxt = nxt.R   
 
 def ConvertMatrixToList(Matrix):
     """Converts a 2d python array into a structure of linked lists based on Donal E. Knuths paper "Dancing Links"
