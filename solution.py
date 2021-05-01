@@ -138,7 +138,7 @@ class AlgorithumXTest(unittest.TestCase):
 
 class DancingLinksTest(unittest.TestCase):
     """
-    you can print the solution by column using the printSolutionFromDict
+    you can print the solution by column using the printSolutionFromDict from HelperFunctions
     Paper Matrix comes from the example matrix in Donal knuth paper
     Lacture Matrix comes from the example matrix from class
     """
