@@ -1,5 +1,6 @@
 import unittest
 from copy import copy,deepcopy
+
 class NodeObject():
     """
     Represents a data Object as highlighted in Donald Knuths paper "dancing links"
@@ -24,7 +25,6 @@ class ColumnNode( NodeObject ):
         super().__init__(U=self,D=self)
         self.N=N
         self.S=S
-
 
 def testfillFromPaper():
     """returns the matrix used as an example in the paper
