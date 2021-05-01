@@ -118,47 +118,88 @@ def dancingLinks(root):
     return O
 
 class AlgorithumXTest(unittest.TestCase):
-    Matrix = HelperFunctions.testFillFromLecture()
+    """
+    Paper Matrix comes from the example matrix in Donal knuth paper
+    Lacture Matrix comes from the example matrix from class
+    """
+    LecutreMatrix = HelperFunctions.testFillFromLecture()
+    PaperMatrix = HelperFunctions.testfillFromPaper()
 
-    def test_algorx_solution_in_solutions( self ):
-        self.assertTrue( [1,3,5] in AlgorithumX(self.Matrix))
-    def test_algorx_length_of_solutions( self ):
-        self.assertTrue(len(AlgorithumX(self.Matrix)) == 6)
+    def test_algorx_solution_in_solutions_fromLectureMatrix( self ):
+        self.assertTrue( [1,3,5] in AlgorithumX(self.LecutreMatrix))
+    def test_algorx_length_of_solutions_fromLectureMatrix( self ):
+        self.assertTrue(len(AlgorithumX(self.LecutreMatrix)) == 6)
+    def test_algorx_solution_in_solutions_fromPaperMatrix( self ):
+        self.assertTrue( [0,3,4] in AlgorithumX(self.PaperMatrix))
+    def test_algorx_length_of_solutions_fromPaperMatrix( self ):
+        self.assertTrue(len(AlgorithumX(self.PaperMatrix)) == 6)
 
-class testSearch(unittest.TestCase):
-    Matrix = HelperFunctions.testFillFromLecture()
-    root = HelperFunctions.ConvertMatrixToList(Matrix)
+class DancingLinksTest(unittest.TestCase):
+    """
+    you can print the solution by column using the printSolutionFromDict function from HelperFunctions
+    Paper Matrix comes from the example matrix in Donal knuth paper
+    Lacture Matrix comes from the example matrix from class
+    """
+    LectureMatrix = HelperFunctions.testFillFromLecture()
+    PaperMatrix = HelperFunctions.testfillFromPaper()
 
-    def test_search_solution(self):
-        
-        """
-        you can print the solution by column using the printSolutionFromDict function from HelperFunctions
-        """
-        Os = dancingLinks(self.root)
+    def test_search_solution_LectureMatrix(self):  
+        root = HelperFunctions.ConvertMatrixToList(self.LectureMatrix)  
+        Os = dancingLinks(root)
         solution = ""
         for key in Os:
             solution += Os[key].I[0]
-
         self.assertTrue( solution == "153")
 
-class MaxtrixToLinkedListsTest(unittest.TestCase):
-    Matrix = HelperFunctions.testFillFromLecture()
+    def test_search_solution_PaperMatrix(self):
+        root = HelperFunctions.ConvertMatrixToList(self.PaperMatrix)  
+        Os = dancingLinks(root)
+        solution = ""
+        for key in Os:
+            solution += Os[key].I[0]
+        self.assertTrue( solution == "340")
 
-    def test_linklist_converter_createColumnHeaders_testcircularlist(self):
-        root = HelperFunctions.createColumnHeaders(self.Matrix)
+class MaxtrixToLinkedListsTest(unittest.TestCase):
+    """
+    Paper Matrix comes from the example matrix in Donal knuth paper
+    Lacture Matrix comes from the example matrix from class
+    """
+    LectureMatrix = HelperFunctions.testFillFromLecture()
+    PaperMatrix = HelperFunctions.testfillFromPaper()
+    
+    def test_linklist_converter_createColumnHeaders_testcircularlist_LectureMaxtrix(self):
+        root = HelperFunctions.createColumnHeaders(self.LectureMatrix)
         self.assertEqual(root.N, "root")
         self.assertEqual(root.L.N, 'g') #last column
         self.assertEqual(root.R.N, 'a') # first column
-    def test_linklist_converter_creatRows_testAllRowsExist(self):
-        root = HelperFunctions.createColumnHeaders(self.Matrix)
-        HelperFunctions.createRows(root,self.Matrix)
+    
+    def test_linklist_converter_creatRows_testAllRowsExist_LectureMaxtrix(self):
+        root = HelperFunctions.createColumnHeaders(self.LectureMatrix)
+        HelperFunctions.createRows(root,self.LectureMatrix)
         #the size of each row from the lecture Matrix
         sizes = [2,2,2,3,2,2,4]
         r = root.R
         for i in sizes:
             self.assertEqual(r.S,i)
             r = r.R
-        
+
+    def test_linklist_converter_createColumnHeaders_testcircularlist_PaperMatrix(self):
+        root = HelperFunctions.createColumnHeaders(self.PaperMatrix)
+        self.assertEqual(root.N, "root")
+        self.assertEqual(root.L.N, 'g') #last column
+        self.assertEqual(root.R.N, 'a') # first column
+    
+    def test_linklist_converter_creatRows_testAllRowsExist_PaperMatrix(self):
+        root = HelperFunctions.createColumnHeaders(self.PaperMatrix)
+        HelperFunctions.createRows(root,self.PaperMatrix)
+        #the size of each row from the paper Matrix
+        sizes = [2,2,2,3,2,2,3]
+        r = root.R
+        for i in sizes:
+            self.assertEqual(r.S,i)
+            r = r.R
+
+
 if __name__ == "__main__":
     unittest.main()
     
