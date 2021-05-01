@@ -3,8 +3,8 @@ from copy import copy,deepcopy
 
 def AlgorithumX(A):
 
-    """brute forces all solutions to the exact cover problem 
-
+    """brute forces all solutions to the exact cover problem
+        I realized after finishing this all solutions are the same, just reordered.
     :param Matrix: 2d python array of 1's and 0's
     
     :return: array of all solutions
@@ -18,26 +18,30 @@ def AlgorithumX(A):
 
     
     def solve(rowToLoop,ColToLoop,level=0,):
+        """
+        preforms algorithumX on given rows and columns
 
+        :param rowToLoop: list of rows to loop over
+        :param type: list
+        :param ColToLoop: list of columns to loop over
+        :param type: list
+        :param level: prints the level of recursion, was used for testing
+        :param type: int
+
+        """
         if len(rowToLoop) == 0 and len(ColToLoop) == 0:
             Solutions.append(copy(Partial_Solution))
-            #print(level,"good",Partial_Solution)
             return 
-
         for j in ColToLoop:
             colSum = 0
             for row in rowToLoop:
                     colSum += A[row][j]
             if colSum == 0:
-                #print(level,"bad")
                 return
         for col in ColToLoop:
             for row in rowToLoop:
-
                 if A[row][col] == 1:
-                    #print(level,row,col)
-                    #print(level,rowToLoop,ColToLoop)
-                    
+ 
                     Partial_Solution.append(row)
                     newRows = copy(rowToLoop)
                     newCols = copy(ColToLoop)
@@ -56,7 +60,6 @@ def AlgorithumX(A):
                         else:
                             j += 1
                     
-                    #print(level,newRows,newCols)
                     k = level +1
                     solve(newRows,newCols,k)
                     Partial_Solution.pop()
@@ -65,36 +68,45 @@ def AlgorithumX(A):
     filtered = []
     filter = lambda x,y: [y.append(i) for i in x if i not in y]
     filter(Solutions,filtered)
-    #print(filtered)
     return filtered
 
 def dancingLinks(root):
+
+    """
+    Preformed the dancing links algorithum on a root node
+
+    :param root: The root node
+    :type root: ColumnObject
+    :return O: Dictionary containg the solution NodeObjects
+    :return type: Dict
+    """
     
     O = {}
     
     def search(k):
+
+        """
+        The search function as outlined by Donald Knuth in "dancing links"
+
+        :param k: the index of the search
+        :param type: int 
+        """
+
         if root.R == root:
             return
         c = root.R
         HelperFunctions.coverColumn(c)
-        #TODO remove print statments
+
         r = c.D
         while r != c:
-
-            #set Ok to r
             O[k] = r
-            
-
             j = r.R
             while j != r:
                 HelperFunctions.coverColumn(j.C)
                 j = j.R
             search(k+1)
-
-            #set r=Ok and c=r.C
             r = O[k]
             c = r.C
-
             j = r.L
             while j != r:
                 HelperFunctions.uncoverColumn(j.C)
@@ -102,7 +114,6 @@ def dancingLinks(root):
             r = r.D
         HelperFunctions.uncoverColumn(c)
         return
-
     search(0)
     return O
 
@@ -118,15 +129,16 @@ class testSearch(unittest.TestCase):
     Matrix = HelperFunctions.testFillFromLecture()
     root = HelperFunctions.ConvertMatrixToList(Matrix)
 
-    """
-    troulbeshooting : make sure the c field of each node is correct
-    """
-
     def test_search_solution(self):
+        
+        """
+        you can print the solution by column using the printSolutionFromDict function from HelperFunctions
+        """
         Os = dancingLinks(self.root)
         solution = ""
         for key in Os:
             solution += Os[key].I[0]
+
         self.assertTrue( solution == "153")
 
 class MaxtrixToLinkedListsTest(unittest.TestCase):
@@ -138,10 +150,9 @@ class MaxtrixToLinkedListsTest(unittest.TestCase):
         self.assertEqual(root.L.N, 'g') #last column
         self.assertEqual(root.R.N, 'a') # first column
     def test_linklist_converter_creatRows_testAllRowsExist(self):
-        #HelperFunctions.pprint(self.Matrix)
         root = HelperFunctions.createColumnHeaders(self.Matrix)
         HelperFunctions.createRows(root,self.Matrix)
-        #the size of each row from he lecture Matrix
+        #the size of each row from the lecture Matrix
         sizes = [2,2,2,3,2,2,4]
         r = root.R
         for i in sizes:

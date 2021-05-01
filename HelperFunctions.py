@@ -1,5 +1,9 @@
 import sys
 class NodeObject():
+    """
+    Represents a data Object as highlighted in Donald Knuths paper "dancing links"
+    The I field indicates an identifier for the NodeObject, In our case we use a 2 digit number corresponding to the row and column
+    """
     def __init__(self,L=None,R=None,U=None,D=None,C=None,I="default"):
         self.L=L
         self.R=R
@@ -10,20 +14,23 @@ class NodeObject():
 
     def printSelf(self):
         print(str(f"L:{self.L},R:{self.R},U:{self.R},D:{self.D},C:{self.C},I:{self.I}"))
-    
-    #def __str__(self):
-    #    return f"L:{self.L},R:{self.R},U:{self.R},D:{self.D},C:{self.C},I:{self.I}"
 
 class ColumnNode( NodeObject ):
+    """
+    Represents a Columnheader as highlighted in Donald Knuths paper "dancing links"
+    """
     def __init__(self,N="defaultName",S=-1):
         super().__init__(U=self,D=self)
         self.N=N
         self.S=S
-    #def __str__(self):
-    #    return str(self.N)
 
 def pprint(matrix):
-    #print column count
+    """
+    prints a matrix
+
+    :param matrix: a matrix to print
+    :type matrix: 2d python array
+    """
     sys.stdout.write(f"  ")
     for i in range(0,len(matrix[0])):
         sys.stdout.write(f" {i} ")
@@ -41,6 +48,7 @@ def pprint(matrix):
             sys.stdout.write(f" {col} ")
         sys.stdout.write("\n")
         rowcount += 1
+
 def testfillFromPaper():
     """returns the matrix used as an example in the paper
     :return: matrix
@@ -54,6 +62,7 @@ def testfillFromPaper():
         [0,1,0,0,0,0,1],
         [0,0,0,1,1,0,1]
     ]
+
 def testFillFromLecture():
     """
     returns matrix used in lecture 
@@ -69,6 +78,7 @@ def testFillFromLecture():
         [0,1,1,0,0,1,1],
         [0,1,0,0,0,0,1]
     ]
+
 def createColumnHeaders(Matrix):
     """ from 2d array create column headers for the link list structure
 
@@ -81,7 +91,6 @@ def createColumnHeaders(Matrix):
     def makeColumnNodes(n):
         if n == 0:
             return ColumnNode(N=chr(97+n),S=0)
-            #return ColumnNode(N=n,S=0)
         a = ColumnNode(N=chr(97+n),S=0) 
         a.L = makeColumnNodes( n-1 )
         return a
@@ -100,6 +109,7 @@ def createColumnHeaders(Matrix):
     root.R = nxt 
     nxt.L = root
     return root
+
 def connectRowsFromRowArray(rowArray):
     """connects rows based on rowArray
 
@@ -121,6 +131,7 @@ def connectRowsFromRowArray(rowArray):
                 First =i
     First.R = prev
     prev.L = First
+
 def createRows(rootNode,Matrix):
     """Loops over matrix adding nodes for each one"
 
@@ -143,9 +154,9 @@ def createRows(rootNode,Matrix):
         connectRowsFromRowArray(rowArray)
 
         #link them to column headers
+
         for i in range(len(rowArray)):
             if rowArray[i] != 0:
-                #find column of this node, i.e i
                 columnHeader = rootNode
                 
                 for x in range(i+1):
@@ -158,15 +169,13 @@ def createRows(rootNode,Matrix):
                 
                 
 
-                #bottom element in a column
+                
                 #set 'up' fields
-
                 rowArray[i].U = columnHeader.U
                 columnHeader.U = rowArray[i]
                 
 
                 #set 'down' fields
-                
                 if columnHeader.D == columnHeader:
                     columnHeader.D = rowArray[i]
 
@@ -175,14 +184,21 @@ def createRows(rootNode,Matrix):
                 if rowArray[i].U != columnHeader and rowArray[i].U != rowArray[i]:
                     rowArray[i].U.D = rowArray[i]
 
-                #rowArray[i].C = columnHeader.D
                 rowArray[i].C = columnHeader
                 columnHeader.S += 1
+
 def printObject(obj):
+    """
+    prints all of an objects fields
+
+    :param obj: the object to print
+    :type obj: any
+    """
     for key in obj.__dict__:
         value = key + ":" + obj.__dict__[key].__str__()
         sys.stdout.write(value + " ")
     print()
+
 def printLinkedLists(rootNode):
     """
     param rootNode: ColumnNode object
@@ -194,6 +210,7 @@ def printLinkedLists(rootNode):
     while nxt != rootNode:
         printObject(nxt)
         nxt = nxt.R   
+
 def ConvertMatrixToList(Matrix):
     """Converts a 2d python array into a structure of linked lists based on Donal E. Knuths paper "Dancing Links"
 
@@ -204,10 +221,15 @@ def ConvertMatrixToList(Matrix):
     """
     rootHeader = createColumnHeaders(Matrix)
     createRows(rootHeader,Matrix)
-
-    #printLinkedLists(rootHeader) 
     return rootHeader
+
 def coverColumn(c):
+    """
+    Disconnects a given column from the rest of a linked list matrix
+
+    :param c: The column to remove
+    :type c: ColumnObject
+    """
     c.R.L = c.L
     c.L.R = c.R
     
@@ -222,7 +244,14 @@ def coverColumn(c):
 
             j = j.R
         i = i.D
+
 def uncoverColumn(c):
+    """
+    Reconnects a given column
+
+    :param c: The column to reconnect
+    :type c: ColumnObject
+    """
     i = c.U
     while i != c:
         j = i.L
@@ -234,15 +263,14 @@ def uncoverColumn(c):
         i=i.U
     c.R.L = c
     c.L.R = c
-def countOnesInMatrix(Matrix):
-    count = 0
-    for row in Matrix:
-        for col in row:
-            if col == 1:
-                count +=1 
-    return count
+
 def printSolutionFromDict(solutionDict):
-    
+    """
+    Prints the solution given a dictionary of solutions
+
+    :param solutionDict: soultion dictionary created by solution.dancingLinks
+    :type solutionDict: dict
+    """
     for key in solutionDict:
         obj = solutionDict[key]
         sys.stdout.write(obj.C.N)
@@ -251,15 +279,3 @@ def printSolutionFromDict(solutionDict):
             sys.stdout.write(nxt.C.N)
             nxt = nxt.R
         print()
-if __name__ == "__main__":
-    #Used for testing
-    A = testFillFromLecture()
-    ones = countOnesInMatrix(A)
-
-    root = ConvertMatrixToList(A)
-    c = root.R
-    coverColumn(c)
-    
-
-
-#cock
