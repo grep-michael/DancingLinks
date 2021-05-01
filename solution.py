@@ -122,22 +122,21 @@ class testSearch(unittest.TestCase):
     troulbeshooting : make sure the c field of each node is correct
     """
 
-    def test_search_solution_in_solutions(self):
-        self.assertTrue( [1,3,5] in dancingLinks(self.root) )
-
+    def test_search_solution(self):
+        Os = dancingLinks(self.root)
+        solution = ""
+        for key in Os:
+            solution += Os[key].I[0]
+        self.assertTrue( solution == "153")
 
 class MaxtrixToLinkedListsTest(unittest.TestCase):
     Matrix = HelperFunctions.testFillFromLecture()
 
-    def test_linklists_converter_test( self ):
-        #if we use the matrix from lecture there should be 24, I counted manually, if algorithum is made and test doesnt pass count again @michael
-        #self.assertTrue(len(MaxtirxToList(Matrix)) == 24)
-        pass
     def test_linklist_converter_createColumnHeaders_testcircularlist(self):
         root = HelperFunctions.createColumnHeaders(self.Matrix)
         self.assertEqual(root.N, "root")
-        self.assertEqual(root.L.N, 6) #last column
-        self.assertEqual(root.R.N, 0) # first column
+        self.assertEqual(root.L.N, 'g') #last column
+        self.assertEqual(root.R.N, 'a') # first column
     def test_linklist_converter_creatRows_testAllRowsExist(self):
         #HelperFunctions.pprint(self.Matrix)
         root = HelperFunctions.createColumnHeaders(self.Matrix)
@@ -149,13 +148,6 @@ class MaxtrixToLinkedListsTest(unittest.TestCase):
             self.assertEqual(r.S,i)
             r = r.R
         
-        
-    def test_linklist_converter_1(self):
-        pass
-
 if __name__ == "__main__":
-    #unittest.main()
-    Matrix = HelperFunctions.testFillFromLecture()
-    root = HelperFunctions.ConvertMatrixToList(Matrix)
-    Os = dancingLinks(root)
-    HelperFunctions.printSolutionFromDict(Os)
+    unittest.main()
+    

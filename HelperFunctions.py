@@ -136,7 +136,7 @@ def createRows(rootNode,Matrix):
         rowArray = [0 for i in Matrix[row]]
         for i in range(len(Matrix[row])):
             if Matrix[row][i] == 1:
-                name = int(str(row) + str(i))
+                name = (str(row) + str(i))
                 rowArray[i] = NodeObject(I=name)
         
         #link them up horizontally
