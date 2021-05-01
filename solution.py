@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import unittest
 from copy import copy,deepcopy
 from HelperFunctions import *
@@ -205,7 +206,6 @@ class MaxtrixToLinkedListsTest(unittest.TestCase):
         for i in sizes:
             self.assertEqual(r.S,i)
             r = r.R
-
 
 if __name__ == "__main__":
     unittest.main()
