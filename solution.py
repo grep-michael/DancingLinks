@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 import unittest
 from copy import copy,deepcopy
 from HelperFunctions import *
