@@ -7,17 +7,20 @@ class NodeObject():
         self.U=U
         self.C=C
         self.I=I
-    def __str__(self):
-        return str(self.I)
+
+    def printSelf(self):
+        print(str(f"L:{self.L},R:{self.R},U:{self.R},D:{self.D},C:{self.C},I:{self.I}"))
+    
+    #def __str__(self):
+    #    return f"L:{self.L},R:{self.R},U:{self.R},D:{self.D},C:{self.C},I:{self.I}"
 
 class ColumnNode( NodeObject ):
     def __init__(self,N="defaultName",S=-1):
-        super().__init__()
+        super().__init__(U=self,D=self)
         self.N=N
         self.S=S
-    def __str__(self):
-        return str(self.N)
-
+    #def __str__(self):
+    #    return str(self.N)
 
 def pprint(matrix):
     #print column count
@@ -66,8 +69,6 @@ def testFillFromLecture():
         [0,1,1,0,0,1,1],
         [0,1,0,0,0,0,1]
     ]
-
-
 def createColumnHeaders(Matrix):
     """ from 2d array create column headers for the link list structure
 
@@ -79,8 +80,9 @@ def createColumnHeaders(Matrix):
 
     def makeColumnNodes(n):
         if n == 0:
-            return ColumnNode(N=n,S=0)
-        a = ColumnNode(N=n,S=0) 
+            return ColumnNode(N=chr(97+n),S=0)
+            #return ColumnNode(N=n,S=0)
+        a = ColumnNode(N=chr(97+n),S=0) 
         a.L = makeColumnNodes( n-1 )
         return a
 
@@ -98,7 +100,6 @@ def createColumnHeaders(Matrix):
     root.R = nxt 
     nxt.L = root
     return root
-
 def connectRowsFromRowArray(rowArray):
     """connects rows based on rowArray
 
@@ -120,8 +121,6 @@ def connectRowsFromRowArray(rowArray):
                 First =i
     First.R = prev
     prev.L = First
-
-
 def createRows(rootNode,Matrix):
     """Loops over matrix adding nodes for each one"
 
@@ -139,43 +138,51 @@ def createRows(rootNode,Matrix):
             if Matrix[row][i] == 1:
                 name = int(str(row) + str(i))
                 rowArray[i] = NodeObject(I=name)
+        
         #link them up horizontally
         connectRowsFromRowArray(rowArray)
+
         #link them to column headers
         for i in range(len(rowArray)):
             if rowArray[i] != 0:
                 #find column of this node, i.e i
                 columnHeader = rootNode
-                while columnHeader:
+                
+                for x in range(i+1):
+                    columnHeader = columnHeader.R
+                
+                """while columnHeader:
                     if columnHeader.N == i:
                         break
-                    columnHeader = columnHeader.L
-                #print(columnHeader,rowArray[i])
-                #print(rowArray)
-                rowArray[i].C = columnHeader
+                    columnHeader = columnHeader.L"""
+                
+                
 
                 #bottom element in a column
-                bottom = columnHeader.U
                 #set 'up' fields
-                columnHeader.U = rowArray[i]
-                if bottom == None:
-                    rowArray[i].U = columnHeader
-                else:
-                    rowArray[i].U = bottom
-                #set 'down' fields
-                if bottom == None:
-                    columnHeader.D = rowArray[i]
-                
-                else:
-                    bottom.D = rowArray[i]
-                columnHeader.S += 1
 
+                rowArray[i].U = columnHeader.U
+                columnHeader.U = rowArray[i]
+                
+
+                #set 'down' fields
+                
+                if columnHeader.D == columnHeader:
+                    columnHeader.D = rowArray[i]
+
+                rowArray[i].D = columnHeader
+
+                if rowArray[i].U != columnHeader and rowArray[i].U != rowArray[i]:
+                    rowArray[i].U.D = rowArray[i]
+
+                #rowArray[i].C = columnHeader.D
+                rowArray[i].C = columnHeader
+                columnHeader.S += 1
 def printObject(obj):
     for key in obj.__dict__:
         value = key + ":" + obj.__dict__[key].__str__()
         sys.stdout.write(value + " ")
     print()
-
 def printLinkedLists(rootNode):
     """
     param rootNode: ColumnNode object
@@ -186,11 +193,7 @@ def printLinkedLists(rootNode):
     nxt = rootNode.R
     while nxt != rootNode:
         printObject(nxt)
-        nxt = nxt.R
-    
-    
-
-
+        nxt = nxt.R   
 def ConvertMatrixToList(Matrix):
     """Converts a 2d python array into a structure of linked lists based on Donal E. Knuths paper "Dancing Links"
 
@@ -202,11 +205,61 @@ def ConvertMatrixToList(Matrix):
     rootHeader = createColumnHeaders(Matrix)
     createRows(rootHeader,Matrix)
 
-    printLinkedLists(rootHeader) 
+    #printLinkedLists(rootHeader) 
+    return rootHeader
+def coverColumn(c):
+    c.R.L = c.L
+    c.L.R = c.R
     
+    i = c.D
+    while i != c:
 
+        j = i.R
+        while j != i:
+            j.D.U = j.U
+            j.U.D = j.D
+            j.C.S = j.C.S - 1
 
+            j = j.R
+        i = i.D
+def uncoverColumn(c):
+    i = c.U
+    while i != c:
+        j = i.L
+        while j != i:
+            j.C.S = j.C.S + 1
+            j.D.U = j
+            j.U.D = j
+            j = j.L
+        i=i.U
+    c.R.L = c
+    c.L.R = c
+def countOnesInMatrix(Matrix):
+    count = 0
+    for row in Matrix:
+        for col in row:
+            if col == 1:
+                count +=1 
+    return count
+def printSolutionFromDict(solutionDict):
+    
+    for key in solutionDict:
+        obj = solutionDict[key]
+        sys.stdout.write(obj.C.N)
+        nxt = obj.R
+        while nxt != obj:
+            sys.stdout.write(nxt.C.N)
+            nxt = nxt.R
+        print()
 if __name__ == "__main__":
     #Used for testing
     A = testFillFromLecture()
-    ConvertMatrixToList(A)
+    ones = countOnesInMatrix(A)
+
+    root = ConvertMatrixToList(A)
+    c = root.R
+    coverColumn(c)
+    
+
+
+#cock

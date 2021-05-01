@@ -68,6 +68,44 @@ def AlgorithumX(A):
     #print(filtered)
     return filtered
 
+def dancingLinks(root):
+    
+    O = {}
+    
+    def search(k):
+        if root.R == root:
+            return
+        c = root.R
+        HelperFunctions.coverColumn(c)
+        #TODO remove print statments
+        r = c.D
+        while r != c:
+
+            #set Ok to r
+            O[k] = r
+            
+
+            j = r.R
+            while j != r:
+                HelperFunctions.coverColumn(j.C)
+                j = j.R
+            search(k+1)
+
+            #set r=Ok and c=r.C
+            r = O[k]
+            c = r.C
+
+            j = r.L
+            while j != r:
+                HelperFunctions.uncoverColumn(j.C)
+                j = j.L
+            r = r.D
+        HelperFunctions.uncoverColumn(c)
+        return
+
+    search(0)
+    return O
+
 class AlgorithumXTest(unittest.TestCase):
     Matrix = HelperFunctions.testFillFromLecture()
 
@@ -75,6 +113,18 @@ class AlgorithumXTest(unittest.TestCase):
         self.assertTrue( [1,3,5] in AlgorithumX(self.Matrix))
     def test_algorx_length_of_solutions( self ):
         self.assertTrue(len(AlgorithumX(self.Matrix)) == 6)
+
+class testSearch(unittest.TestCase):
+    Matrix = HelperFunctions.testFillFromLecture()
+    root = HelperFunctions.ConvertMatrixToList(Matrix)
+
+    """
+    troulbeshooting : make sure the c field of each node is correct
+    """
+
+    def test_search_solution_in_solutions(self):
+        self.assertTrue( [1,3,5] in dancingLinks(self.root) )
+
 
 class MaxtrixToLinkedListsTest(unittest.TestCase):
     Matrix = HelperFunctions.testFillFromLecture()
@@ -104,4 +154,8 @@ class MaxtrixToLinkedListsTest(unittest.TestCase):
         pass
 
 if __name__ == "__main__":
-    unittest.main()
+    #unittest.main()
+    Matrix = HelperFunctions.testFillFromLecture()
+    root = HelperFunctions.ConvertMatrixToList(Matrix)
+    Os = dancingLinks(root)
+    HelperFunctions.printSolutionFromDict(Os)
