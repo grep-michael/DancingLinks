@@ -19,7 +19,7 @@ def AlgorithumX(A):
     Partial_Solution = []
 
     
-    def solve(rowToLoop,ColToLoop,level=0,):
+    def solve(rowToLoop,ColToLoop,level=0):
         """
         preforms algorithumX on given rows and columns
 
