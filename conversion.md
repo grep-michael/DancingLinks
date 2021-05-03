@@ -16,3 +16,14 @@
     - loop over column objects
     - loop over rows
     - make sure header had a L and R
+
+# function calls to create Node structure
+```
+.HelperFunctions.py
+|
+`--createColumnHeader(Matrix)
+  |
+  `--createRows(root,Matrix)
+    |
+    `--connectRowsFromRowArray(rowArray), for each row
+```
